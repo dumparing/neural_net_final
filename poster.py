@@ -2,9 +2,6 @@
 """
 poster.py – Generate a clean, audience-friendly poster for presentation.
 
-Designed for a general audience (parents, friends, employers).
-Plain language, big visuals, clear punchlines.
-
 Usage:
     python3 poster.py
 
@@ -27,11 +24,10 @@ BLUE = "#0072B2"
 ORANGE = "#D55E00"
 GREEN = "#009E73"
 DARK = "#1a1a2e"
-LIGHT_BG = "#f8f9fa"
-ACCENT = "#e65100"
+RED = "#c62828"
 
-MODEL_COLORS = {"TinyLlama\n1.1B": BLUE, "Phi-3\n3.8B": ORANGE, "Mistral\n7B": GREEN}
-MODELS = ["TinyLlama\n1.1B", "Phi-3\n3.8B", "Mistral\n7B"]
+MODEL_COLORS = [BLUE, ORANGE, GREEN]
+MODELS_SHORT = ["TinyLlama\n1.1B", "Phi-3\n3.8B", "Mistral\n7B"]
 
 # Data
 SUMM_ROUGEL = [0.174, 0.249, 0.279]
@@ -43,13 +39,12 @@ THROUGHPUT = [48.3, 31.2, 18.7]
 
 
 def main():
-    fig = plt.figure(figsize=(48, 36), facecolor="white")
+    fig = plt.figure(figsize=(60, 40), facecolor="white")
 
-    # Overall layout: header, then 3 rows
     outer = gridspec.GridSpec(
-        5, 1, figure=fig,
-        height_ratios=[0.10, 0.005, 0.30, 0.30, 0.25],
-        hspace=0.04, top=0.98, bottom=0.02, left=0.03, right=0.97
+        4, 1, figure=fig,
+        height_ratios=[0.08, 0.32, 0.32, 0.28],
+        hspace=0.05, top=0.98, bottom=0.02, left=0.025, right=0.975
     )
 
     # ============================================================ #
@@ -58,278 +53,268 @@ def main():
     ax = fig.add_subplot(outer[0])
     ax.axis("off")
     ax.add_patch(FancyBboxPatch(
-        (0, 0), 1, 1, boxstyle="round,pad=0.01",
+        (0, 0), 1, 1, boxstyle="round,pad=0.008",
         facecolor=DARK, edgecolor="none", transform=ax.transAxes
     ))
-    ax.text(0.5, 0.7, "When Is Smaller Better?",
-            transform=ax.transAxes, fontsize=58, fontweight="bold",
-            color="white", ha="center", va="center", fontfamily="sans-serif")
-    ax.text(0.5, 0.3, "We tested whether cheap, fast AI models can replace expensive ones — and found the surprising sweet spot.",
-            transform=ax.transAxes, fontsize=26, color="#bbbbbb",
-            ha="center", va="center", fontfamily="sans-serif", style="italic")
-    ax.text(0.5, 0.05, "Alex Zhou  &  Jason Gao   |   CSCI 5922: Neural Networks & Deep Learning   |   Spring 2026",
-            transform=ax.transAxes, fontsize=20, color="#888888",
-            ha="center", va="center", fontfamily="sans-serif")
-
-    # Divider
-    ax = fig.add_subplot(outer[1])
-    ax.axis("off")
+    ax.text(0.5, 0.72, "When Is Smaller Better?",
+            transform=ax.transAxes, fontsize=72, fontweight="bold",
+            color="white", ha="center", va="center")
+    ax.text(0.5, 0.32, "We tested whether cheap, fast AI models can replace expensive ones — and found the surprising sweet spot.",
+            transform=ax.transAxes, fontsize=32, color="#bbbbbb",
+            ha="center", va="center", style="italic")
+    ax.text(0.5, 0.06, "Alex Zhou  &  Jason Gao   |   CSCI 5922: Neural Networks & Deep Learning   |   Spring 2026",
+            transform=ax.transAxes, fontsize=26, color="#888888", ha="center", va="center")
 
     # ============================================================ #
-    #  ROW 1: The Problem | What We Did | The Models                #
+    #  ROW 1: Problem | What We Did | Models                        #
     # ============================================================ #
-    row1 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[2], wspace=0.05)
+    row1 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[1], wspace=0.04)
 
     # --- THE PROBLEM ---
     ax = fig.add_subplot(row1[0])
     ax.axis("off")
-    _section_box(ax, "#eef4ff", BLUE)
-    ax.text(0.5, 0.94, "The Problem", transform=ax.transAxes,
-            fontsize=32, fontweight="bold", ha="center", va="top", color=DARK)
-    ax.add_patch(FancyBboxPatch(
-        (0.06, 0.70), 0.88, 0.18, boxstyle="round,pad=0.02",
-        facecolor="white", edgecolor=BLUE, linewidth=2, transform=ax.transAxes
-    ))
-    ax.text(0.5, 0.79, "AI language models are getting bigger and better —\nbut bigger also means slower and more expensive.",
-            transform=ax.transAxes, fontsize=20, ha="center", va="center",
-            color=DARK, linespacing=1.5, fontweight="bold")
+    _box(ax, "#eef4ff", BLUE)
+    ax.text(0.5, 0.95, "The Problem", transform=ax.transAxes,
+            fontsize=42, fontweight="bold", ha="center", va="top", color=DARK)
 
-    problem_text = (
-        "Companies deploying AI face a dilemma:\n\n"
-        "  Use a large model?\n"
-        "     Great answers, but slow & costly\n\n"
-        "  Use a small model?\n"
-        "     Fast & cheap, but are the answers\n"
-        "     good enough?\n\n"
-        "Existing rankings (like leaderboards) only\n"
-        "measure answer quality. They ignore speed\n"
-        "and cost — the factors that matter most\n"
-        "when you're actually building a product."
-    )
-    ax.text(0.08, 0.65, problem_text, transform=ax.transAxes,
-            fontsize=19, va="top", linespacing=1.5, color="#222222")
+    ax.add_patch(FancyBboxPatch(
+        (0.06, 0.74), 0.88, 0.14, boxstyle="round,pad=0.02",
+        facecolor="white", edgecolor=BLUE, linewidth=3, transform=ax.transAxes
+    ))
+    ax.text(0.5, 0.81, "Bigger AI = better answers, but slower & costlier.\nIs the upgrade always worth it?",
+            transform=ax.transAxes, fontsize=26, ha="center", va="center",
+            color=DARK, linespacing=1.4, fontweight="bold")
+
+    lines = [
+        (0.76, "Large model", "Great quality, but slow & expensive", GREEN, RED),
+        (0.58, "Small model", "Fast & cheap, but are answers good enough?", BLUE, ORANGE),
+    ]
+    for y_pos, label, desc, col1, col2 in lines:
+        ax.add_patch(FancyBboxPatch(
+            (0.06, y_pos - 0.06), 0.88, 0.14, boxstyle="round,pad=0.02",
+            facecolor=col1 + "15", edgecolor=col1, linewidth=2, transform=ax.transAxes
+        ))
+        ax.text(0.12, y_pos + 0.04, label, transform=ax.transAxes,
+                fontsize=28, fontweight="bold", va="center", color=col1)
+        ax.text(0.12, y_pos - 0.025, desc, transform=ax.transAxes,
+                fontsize=22, va="center", color="#333333")
+
+    ax.text(0.5, 0.36, "Existing leaderboards only rank quality.\nThey ignore speed and cost —", transform=ax.transAxes,
+            fontsize=24, ha="center", va="center", color="#444444", linespacing=1.5)
+    ax.text(0.5, 0.22, "the factors that actually matter\nfor real-world deployment.", transform=ax.transAxes,
+            fontsize=26, ha="center", va="center", color=DARK, fontweight="bold", linespacing=1.4)
 
     # --- WHAT WE DID ---
     ax = fig.add_subplot(row1[1])
     ax.axis("off")
-    _section_box(ax, "#fff8e1", ORANGE)
-    ax.text(0.5, 0.94, "What We Did", transform=ax.transAxes,
-            fontsize=32, fontweight="bold", ha="center", va="top", color=DARK)
+    _box(ax, "#fff8e1", ORANGE)
+    ax.text(0.5, 0.95, "What We Did", transform=ax.transAxes,
+            fontsize=42, fontweight="bold", ha="center", va="top", color=DARK)
 
     steps = [
-        ("1", "Picked 3 AI models", "Small (1.1B), Medium (3.8B), Large (7B)\n— spanning a 7x size difference"),
-        ("2", "Gave them 600 tasks", "300 article summaries (XSum dataset)\n300 reading comprehension questions (SQuAD)"),
-        ("3", "Measured everything", "Answer quality (ROUGE, F1 scores)\nSpeed (seconds per answer)\nMemory usage (GB of GPU RAM)"),
-        ("4", "Found the sweet spot", "Which model gives the best\nquality-per-second?"),
+        ("1", "Picked 3 AI models of different sizes",
+         "Small (1.1B) · Medium (3.8B) · Large (7B)"),
+        ("2", "Gave them 600 real tasks",
+         "300 summaries + 300 reading questions"),
+        ("3", "Measured quality AND speed",
+         "How good? How fast? How much memory?"),
+        ("4", "Found the best bang for your buck",
+         "Which model gives the best quality-per-second?"),
     ]
-    y = 0.85
+    y = 0.84
     for num, title, desc in steps:
-        # Number circle
         ax.add_patch(FancyBboxPatch(
-            (0.06, y - 0.025), 0.06, 0.055, boxstyle="round,pad=0.01",
+            (0.06, y - 0.01), 0.07, 0.065, boxstyle="round,pad=0.008",
             facecolor=ORANGE, edgecolor="none", transform=ax.transAxes
         ))
-        ax.text(0.09, y, num, transform=ax.transAxes, fontsize=22,
+        ax.text(0.095, y + 0.02, num, transform=ax.transAxes, fontsize=30,
                 fontweight="bold", ha="center", va="center", color="white")
-        ax.text(0.16, y + 0.01, title, transform=ax.transAxes, fontsize=21,
+        ax.text(0.17, y + 0.035, title, transform=ax.transAxes, fontsize=26,
                 fontweight="bold", va="center", color=DARK)
-        ax.text(0.16, y - 0.055, desc, transform=ax.transAxes, fontsize=16,
-                va="top", color="#444444", linespacing=1.4)
-        y -= 0.22
+        ax.text(0.17, y - 0.02, desc, transform=ax.transAxes, fontsize=22,
+                va="center", color="#555555")
+        y -= 0.19
 
     # --- THE MODELS ---
     ax = fig.add_subplot(row1[2])
     ax.axis("off")
-    _section_box(ax, "#e8f5e9", GREEN)
-    ax.text(0.5, 0.94, "The Three Models", transform=ax.transAxes,
-            fontsize=32, fontweight="bold", ha="center", va="top", color=DARK)
+    _box(ax, "#e8f5e9", GREEN)
+    ax.text(0.5, 0.95, "The Three Models", transform=ax.transAxes,
+            fontsize=42, fontweight="bold", ha="center", va="top", color=DARK)
 
     models_info = [
-        ("TinyLlama", "1.1 Billion parameters", BLUE,
-         "The lightweight option.\nFast and cheap, but can it keep up?", "2.4 GB RAM"),
-        ("Phi-3 Mini", "3.8 Billion parameters", ORANGE,
-         "The middle ground.\nMicrosoft's efficient instruction-tuned model.", "7.7 GB RAM"),
-        ("Mistral-7B", "7.2 Billion parameters", GREEN,
-         "The heavyweight.\nOur quality benchmark — but at what cost?", "13.9 GB RAM"),
+        ("TinyLlama", "1.1 Billion parameters", BLUE, "The lightweight.", "2.4 GB"),
+        ("Phi-3 Mini", "3.8 Billion parameters", ORANGE, "The middle ground.", "7.7 GB"),
+        ("Mistral-7B", "7.2 Billion parameters", GREEN, "The heavyweight.", "13.9 GB"),
     ]
-    y = 0.82
+    y = 0.83
     for name, params, color, desc, mem in models_info:
         ax.add_patch(FancyBboxPatch(
-            (0.05, y - 0.06), 0.9, 0.17, boxstyle="round,pad=0.02",
-            facecolor="white", edgecolor=color, linewidth=3, transform=ax.transAxes
+            (0.05, y - 0.07), 0.9, 0.19, boxstyle="round,pad=0.02",
+            facecolor="white", edgecolor=color, linewidth=4, transform=ax.transAxes
         ))
-        ax.text(0.10, y + 0.06, name, transform=ax.transAxes, fontsize=23,
+        ax.text(0.12, y + 0.07, name, transform=ax.transAxes, fontsize=32,
                 fontweight="bold", va="center", color=color)
-        ax.text(0.92, y + 0.06, mem, transform=ax.transAxes, fontsize=16,
-                va="center", ha="right", color="#666666",
+        ax.text(0.92, y + 0.07, mem, transform=ax.transAxes, fontsize=22,
+                va="center", ha="right", color="#666666", fontweight="bold",
                 bbox=dict(boxstyle="round,pad=0.3", facecolor=color + "20", edgecolor="none"))
-        ax.text(0.10, y + 0.02, params, transform=ax.transAxes, fontsize=16,
+        ax.text(0.12, y + 0.01, params, transform=ax.transAxes, fontsize=22,
                 va="center", color="#666666")
-        ax.text(0.10, y - 0.03, desc, transform=ax.transAxes, fontsize=16,
-                va="center", color="#333333", linespacing=1.4)
-        y -= 0.27
+        ax.text(0.12, y - 0.04, desc, transform=ax.transAxes, fontsize=24,
+                va="center", color="#333333", fontweight="bold")
+        y -= 0.28
 
     # ============================================================ #
-    #  ROW 2: Results — the plots                                   #
+    #  ROW 2: Results plots                                         #
     # ============================================================ #
-    row2 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[3], wspace=0.07)
+    row2 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[2], wspace=0.06)
 
-    # --- SUMMARIZATION: Quality vs Speed ---
+    # --- Summarization scatter ---
     ax = fig.add_subplot(row2[0])
-    for i, m in enumerate(MODELS):
-        ax.scatter(SUMM_LAT[i], SUMM_ROUGEL[i] * 100, s=600,
-                   color=list(MODEL_COLORS.values())[i],
-                   marker="o", edgecolors="black", linewidth=2, zorder=5, label=m)
-    ax.plot(SUMM_LAT, [r * 100 for r in SUMM_ROUGEL], '--', color='gray', alpha=0.4, lw=2)
-    ax.set_xlabel("Time per answer (seconds)", fontsize=18, labelpad=10)
-    ax.set_ylabel("Summary Quality (ROUGE-L %)", fontsize=18, labelpad=10)
-    ax.set_title("Summarization Task", fontsize=26, fontweight="bold", pad=20)
-    ax.legend(fontsize=16, loc="lower right", markerscale=0.8)
+    for i in range(3):
+        ax.scatter(SUMM_LAT[i], SUMM_ROUGEL[i] * 100, s=900,
+                   color=MODEL_COLORS[i], marker="o",
+                   edgecolors="black", linewidth=2.5, zorder=5,
+                   label=["TinyLlama 1.1B", "Phi-3 3.8B", "Mistral 7B"][i])
+    ax.plot(SUMM_LAT, [r * 100 for r in SUMM_ROUGEL], '--', color='gray', alpha=0.4, lw=2.5)
+    ax.set_xlabel("Time per answer (seconds)", fontsize=24, labelpad=12)
+    ax.set_ylabel("Summary Quality (%)", fontsize=24, labelpad=12)
+    ax.set_title("Summarization", fontsize=34, fontweight="bold", pad=20)
+    ax.legend(fontsize=20, loc="lower right", markerscale=0.7)
     ax.grid(True, alpha=0.2)
-    ax.tick_params(labelsize=15)
-    # Annotation
+    ax.tick_params(labelsize=20)
     ax.annotate("4.6x faster\nonly 10 pts lower",
                 xy=(SUMM_LAT[0], SUMM_ROUGEL[0] * 100),
-                xytext=(4.5, 14.5), fontsize=15, ha="center", fontweight="bold",
-                arrowprops=dict(arrowstyle="-|>", color=BLUE, lw=2.5),
-                bbox=dict(boxstyle="round,pad=0.4", facecolor="#e3f2fd", edgecolor=BLUE, lw=1.5))
-    # Arrow showing "ideal" direction
-    ax.annotate("", xy=(1.0, 30), xytext=(3.0, 22),
-                arrowprops=dict(arrowstyle="-|>", color="#aaaaaa", lw=2, ls="--"))
-    ax.text(1.5, 27, "ideal", fontsize=14, color="#aaaaaa", style="italic", rotation=25)
+                xytext=(5.0, 14), fontsize=20, ha="center", fontweight="bold",
+                arrowprops=dict(arrowstyle="-|>", color=BLUE, lw=3),
+                bbox=dict(boxstyle="round,pad=0.5", facecolor="#e3f2fd", edgecolor=BLUE, lw=2))
 
-    # --- QA: Quality vs Speed ---
+    # --- QA scatter ---
     ax = fig.add_subplot(row2[1])
-    for i, m in enumerate(MODELS):
-        ax.scatter(QA_LAT[i], QA_F1[i] * 100, s=600,
-                   color=list(MODEL_COLORS.values())[i],
-                   marker="s", edgecolors="black", linewidth=2, zorder=5, label=m)
-    ax.plot(QA_LAT, [f * 100 for f in QA_F1], '--', color='gray', alpha=0.4, lw=2)
-    ax.set_xlabel("Time per answer (seconds)", fontsize=18, labelpad=10)
-    ax.set_ylabel("Answer Accuracy (F1 %)", fontsize=18, labelpad=10)
-    ax.set_title("Question Answering Task", fontsize=26, fontweight="bold", pad=20)
-    ax.legend(fontsize=16, loc="lower right", markerscale=0.8)
+    for i in range(3):
+        ax.scatter(QA_LAT[i], QA_F1[i] * 100, s=900,
+                   color=MODEL_COLORS[i], marker="s",
+                   edgecolors="black", linewidth=2.5, zorder=5,
+                   label=["TinyLlama 1.1B", "Phi-3 3.8B", "Mistral 7B"][i])
+    ax.plot(QA_LAT, [f * 100 for f in QA_F1], '--', color='gray', alpha=0.4, lw=2.5)
+    ax.set_xlabel("Time per answer (seconds)", fontsize=24, labelpad=12)
+    ax.set_ylabel("Answer Accuracy (%)", fontsize=24, labelpad=12)
+    ax.set_title("Question Answering", fontsize=34, fontweight="bold", pad=20)
+    ax.legend(fontsize=20, loc="lower right", markerscale=0.7)
     ax.grid(True, alpha=0.2)
-    ax.tick_params(labelsize=15)
+    ax.tick_params(labelsize=20)
     ax.annotate("TinyLlama can't\nfollow instructions!",
                 xy=(QA_LAT[0], QA_F1[0] * 100),
-                xytext=(2.2, 30), fontsize=15, ha="center", fontweight="bold",
-                color="#c62828",
-                arrowprops=dict(arrowstyle="-|>", color="#c62828", lw=2.5),
-                bbox=dict(boxstyle="round,pad=0.4", facecolor="#ffebee", edgecolor="#c62828", lw=1.5))
+                xytext=(2.5, 32), fontsize=20, ha="center", fontweight="bold", color=RED,
+                arrowprops=dict(arrowstyle="-|>", color=RED, lw=3),
+                bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffebee", edgecolor=RED, lw=2))
 
-    # --- Speed & Memory comparison ---
+    # --- Speed & Memory ---
     ax = fig.add_subplot(row2[2])
     x = np.arange(3)
-    bar_w = 0.35
-    colors = [BLUE, ORANGE, GREEN]
-
-    # Throughput bars
-    bars1 = ax.bar(x - bar_w/2, THROUGHPUT, bar_w, color=colors,
-                   edgecolor="black", linewidth=1, label="Tokens/sec", alpha=0.85)
+    w = 0.32
+    bars1 = ax.bar(x - w/2, THROUGHPUT, w, color=MODEL_COLORS,
+                   edgecolor="black", linewidth=1.5, label="Speed (tokens/sec)")
     for bar, v in zip(bars1, THROUGHPUT):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5,
-                f"{v:.0f}", ha="center", va="bottom", fontsize=16, fontweight="bold")
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.8,
+                f"{v:.0f}", ha="center", va="bottom", fontsize=22, fontweight="bold")
 
     ax2 = ax.twinx()
-    bars2 = ax2.bar(x + bar_w/2, MEMORY_GB, bar_w, color=colors,
-                    edgecolor="black", linewidth=1, alpha=0.4, hatch="//")
+    bars2 = ax2.bar(x + w/2, MEMORY_GB, w, color=MODEL_COLORS,
+                    edgecolor="black", linewidth=1.5, alpha=0.35, hatch="///")
     for bar, v in zip(bars2, MEMORY_GB):
-        ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.2,
-                 f"{v:.1f} GB", ha="center", va="bottom", fontsize=14, color="#666666")
+        ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.3,
+                 f"{v:.1f}GB", ha="center", va="bottom", fontsize=19, color="#444444", fontweight="bold")
 
     ax.set_xticks(x)
-    ax.set_xticklabels(["TinyLlama\n1.1B", "Phi-3\n3.8B", "Mistral\n7B"], fontsize=15)
-    ax.set_ylabel("Speed (tokens/sec, solid)", fontsize=16, labelpad=10)
-    ax2.set_ylabel("Memory (GB, hatched)", fontsize=16, labelpad=10)
-    ax.set_title("Speed vs. Memory Cost", fontsize=26, fontweight="bold", pad=20)
-    ax.tick_params(labelsize=14)
-    ax2.tick_params(labelsize=14)
+    ax.set_xticklabels(["TinyLlama\n1.1B", "Phi-3\n3.8B", "Mistral\n7B"], fontsize=20)
+    ax.set_ylabel("Speed (tokens/sec)", fontsize=22, labelpad=12)
+    ax2.set_ylabel("Memory (GB)", fontsize=22, labelpad=12)
+    ax.set_title("Speed vs. Memory Cost", fontsize=34, fontweight="bold", pad=20)
+    ax.tick_params(labelsize=18)
+    ax2.tick_params(labelsize=18)
     ax.grid(axis="y", alpha=0.2)
 
     # ============================================================ #
     #  ROW 3: Three Takeaways                                       #
     # ============================================================ #
-    row3 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[4], wspace=0.05)
+    row3 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[3], wspace=0.04)
 
     # --- TAKEAWAY 1 ---
     ax = fig.add_subplot(row3[0])
     ax.axis("off")
-    _section_box(ax, "#e3f2fd", BLUE)
-    ax.text(0.5, 0.92, "Takeaway #1", transform=ax.transAxes,
-            fontsize=24, fontweight="bold", ha="center", va="top", color="#666666")
+    _box(ax, "#e3f2fd", BLUE)
+    ax.text(0.5, 0.94, "TAKEAWAY #1", transform=ax.transAxes,
+            fontsize=28, fontweight="bold", ha="center", va="top", color=BLUE)
     ax.text(0.5, 0.72, "Phi-3 is the\nsweet spot", transform=ax.transAxes,
-            fontsize=34, fontweight="bold", ha="center", va="center", color=DARK,
-            linespacing=1.3)
+            fontsize=46, fontweight="bold", ha="center", va="center", color=DARK,
+            linespacing=1.2)
     ax.add_patch(FancyBboxPatch(
-        (0.08, 0.20), 0.84, 0.30, boxstyle="round,pad=0.03",
-        facecolor="white", edgecolor=BLUE, linewidth=2, transform=ax.transAxes
+        (0.08, 0.22), 0.84, 0.28, boxstyle="round,pad=0.03",
+        facecolor="white", edgecolor=BLUE, linewidth=3, transform=ax.transAxes
     ))
-    ax.text(0.5, 0.38, "89% of the big model's quality\nat 45% of the speed cost",
-            transform=ax.transAxes, fontsize=21, ha="center", va="center",
-            color=DARK, linespacing=1.5, fontweight="bold")
-    ax.text(0.5, 0.10, "Best quality-per-second of all three models.",
-            transform=ax.transAxes, fontsize=18, ha="center", va="center",
+    ax.text(0.5, 0.40, "89% of the quality", transform=ax.transAxes,
+            fontsize=30, ha="center", va="center", color=DARK, fontweight="bold")
+    ax.text(0.5, 0.30, "at 45% of the cost", transform=ax.transAxes,
+            fontsize=30, ha="center", va="center", color=ORANGE, fontweight="bold")
+    ax.text(0.5, 0.12, "Best quality-per-second of all models.",
+            transform=ax.transAxes, fontsize=22, ha="center", va="center",
             color="#666666", style="italic")
 
     # --- TAKEAWAY 2 ---
     ax = fig.add_subplot(row3[1])
     ax.axis("off")
-    _section_box(ax, "#fff8e1", ORANGE)
-    ax.text(0.5, 0.92, "Takeaway #2", transform=ax.transAxes,
-            fontsize=24, fontweight="bold", ha="center", va="top", color="#666666")
+    _box(ax, "#fff8e1", ORANGE)
+    ax.text(0.5, 0.94, "TAKEAWAY #2", transform=ax.transAxes,
+            fontsize=28, fontweight="bold", ha="center", va="top", color=ORANGE)
     ax.text(0.5, 0.72, "The task\nmatters a lot", transform=ax.transAxes,
-            fontsize=34, fontweight="bold", ha="center", va="center", color=DARK,
-            linespacing=1.3)
+            fontsize=46, fontweight="bold", ha="center", va="center", color=DARK,
+            linespacing=1.2)
     ax.add_patch(FancyBboxPatch(
-        (0.08, 0.20), 0.84, 0.30, boxstyle="round,pad=0.03",
-        facecolor="white", edgecolor=ORANGE, linewidth=2, transform=ax.transAxes
+        (0.08, 0.22), 0.84, 0.28, boxstyle="round,pad=0.03",
+        facecolor="white", edgecolor=ORANGE, linewidth=3, transform=ax.transAxes
     ))
-    ax.text(0.5, 0.42, "Summarization gap:  10 points",
-            transform=ax.transAxes, fontsize=20, ha="center", va="center",
-            color=GREEN, fontweight="bold")
-    ax.text(0.5, 0.32, "Question answering gap:  39 points",
-            transform=ax.transAxes, fontsize=20, ha="center", va="center",
-            color="#c62828", fontweight="bold")
-    ax.text(0.5, 0.10, "Harder tasks expose bigger quality gaps\nbetween small and large models.",
-            transform=ax.transAxes, fontsize=18, ha="center", va="center",
-            color="#666666", style="italic", linespacing=1.4)
+    ax.text(0.5, 0.42, "Summarization gap:  10 pts", transform=ax.transAxes,
+            fontsize=28, ha="center", va="center", color=GREEN, fontweight="bold")
+    ax.text(0.5, 0.30, "Question answering gap:  39 pts", transform=ax.transAxes,
+            fontsize=28, ha="center", va="center", color=RED, fontweight="bold")
+    ax.text(0.5, 0.12, "Harder tasks expose bigger gaps.",
+            transform=ax.transAxes, fontsize=22, ha="center", va="center",
+            color="#666666", style="italic")
 
     # --- TAKEAWAY 3 ---
     ax = fig.add_subplot(row3[2])
     ax.axis("off")
-    _section_box(ax, "#e8f5e9", GREEN)
-    ax.text(0.5, 0.92, "Takeaway #3", transform=ax.transAxes,
-            fontsize=24, fontweight="bold", ha="center", va="top", color="#666666")
+    _box(ax, "#e8f5e9", GREEN)
+    ax.text(0.5, 0.94, "TAKEAWAY #3", transform=ax.transAxes,
+            fontsize=28, fontweight="bold", ha="center", va="top", color=GREEN)
     ax.text(0.5, 0.72, "Small models\ndon't listen", transform=ax.transAxes,
-            fontsize=34, fontweight="bold", ha="center", va="center", color=DARK,
-            linespacing=1.3)
+            fontsize=46, fontweight="bold", ha="center", va="center", color=DARK,
+            linespacing=1.2)
     ax.add_patch(FancyBboxPatch(
-        (0.08, 0.20), 0.84, 0.30, boxstyle="round,pad=0.03",
-        facecolor="white", edgecolor=GREEN, linewidth=2, transform=ax.transAxes
+        (0.08, 0.18), 0.84, 0.34, boxstyle="round,pad=0.03",
+        facecolor="white", edgecolor=GREEN, linewidth=3, transform=ax.transAxes
     ))
-    ax.text(0.5, 0.42, 'Q: "When was the Eiffel Tower built?"', transform=ax.transAxes,
-            fontsize=18, ha="center", va="center", color="#666666")
-    ax.text(0.5, 0.35, 'Mistral: "1889"     (correct)',
-            transform=ax.transAxes, fontsize=18, ha="center", va="center",
-            color=GREEN, fontweight="bold")
-    ax.text(0.5, 0.28, 'TinyLlama: "The Eiffel Tower is a\nfamous landmark..."     (missed it)',
-            transform=ax.transAxes, fontsize=18, ha="center", va="center",
-            color="#c62828", fontweight="bold", linespacing=1.3)
-    ax.text(0.5, 0.10, "Smaller models often ignore instructions\nand ramble instead of answering.",
-            transform=ax.transAxes, fontsize=18, ha="center", va="center",
-            color="#666666", style="italic", linespacing=1.4)
+    ax.text(0.5, 0.46, 'Q: "When was the Eiffel Tower built?"', transform=ax.transAxes,
+            fontsize=24, ha="center", va="center", color="#555555")
+    ax.text(0.5, 0.37, 'Mistral:  "1889"', transform=ax.transAxes,
+            fontsize=28, ha="center", va="center", color=GREEN, fontweight="bold")
+    ax.text(0.5, 0.26, 'TinyLlama:  "The Eiffel Tower\nis a famous landmark..."', transform=ax.transAxes,
+            fontsize=26, ha="center", va="center", color=RED, fontweight="bold", linespacing=1.3)
+    ax.text(0.5, 0.10, "Smaller models ramble instead of answering.",
+            transform=ax.transAxes, fontsize=22, ha="center", va="center",
+            color="#666666", style="italic")
 
     fig.savefig(OUTPUT_PATH, dpi=100, facecolor="white", edgecolor="none")
     plt.close(fig)
     print(f"Poster saved to: {OUTPUT_PATH}")
 
 
-def _section_box(ax, facecolor, edgecolor):
+def _box(ax, facecolor, edgecolor):
     ax.add_patch(FancyBboxPatch(
         (0.01, 0.01), 0.98, 0.98, boxstyle="round,pad=0.02",
         facecolor=facecolor, edgecolor=edgecolor,
-        linewidth=3, transform=ax.transAxes, zorder=0
+        linewidth=3.5, transform=ax.transAxes, zorder=0
     ))
 
 
