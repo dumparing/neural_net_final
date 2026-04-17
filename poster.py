@@ -73,7 +73,7 @@ def main():
     header_ax.text(0.5, 0.28, "Evaluating Quality-Latency Tradeoffs in Instruction-Tuned Language Models",
                    transform=header_ax.transAxes, fontsize=30, color="#cccccc",
                    ha="center", va="center")
-    header_ax.text(0.5, 0.05, "Jason Gao  |  CSCI 5922: Neural Networks and Deep Learning  |  Spring 2026",
+    header_ax.text(0.5, 0.05, "Alex Zhou & Jason Gao  |  CSCI 5922: Neural Networks and Deep Learning  |  Spring 2026",
                    transform=header_ax.transAxes, fontsize=22, color="#999999",
                    ha="center", va="center")
 
