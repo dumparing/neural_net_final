@@ -1,0 +1,13 @@
+torch>=2.0.0
+transformers>=4.40.0
+datasets>=2.19.0
+evaluate>=0.4.1
+rouge-score>=0.1.2
+nltk>=3.8.1
+matplotlib>=3.7.0
+pandas>=2.0.0
+numpy>=1.24.0
+pyyaml>=6.0
+accelerate>=0.28.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0

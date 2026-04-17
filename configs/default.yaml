@@ -1,0 +1,51 @@
+# ============================================================
+# Default configuration for the quality–latency tradeoff study
+# ============================================================
+
+# Models to evaluate (order determines execution order)
+models:
+  - "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+  - "microsoft/Phi-3-mini-4k-instruct"
+  - "mistralai/Mistral-7B-Instruct-v0.3"
+
+# Tasks to run
+tasks:
+  - "summarization"
+  - "qa"
+
+# Dataset sampling
+num_samples_summarization: 300
+num_samples_qa: 300
+
+# Dry-run mode: if true, override sample counts to dry_run_samples
+dry_run: false
+dry_run_samples: 10
+
+# Random seed for reproducibility
+seed: 42
+
+# Tokenization / generation
+max_input_length: 1024      # max tokens for the input prompt
+max_new_tokens: 256          # max tokens to generate
+temperature: 0.0             # 0 → greedy decoding
+top_p: 1.0
+do_sample: false             # greedy by default
+repetition_penalty: 1.0
+
+# Warmup: number of dummy generations before timing
+warmup_steps: 3
+
+# Hardware
+device: "auto"               # "auto", "cpu", "cuda", "mps"
+dtype: "auto"                # "auto", "float16", "bfloat16", "float32"
+
+# Output
+output_dir: "outputs"
+
+# Flags
+skip_plots: false
+skip_memory_measurement: false
+resume: false                # if true, skip model/task combos with existing results
+
+# Batch size (for future use; generation is done one example at a time)
+batch_size: 1
